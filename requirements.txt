@@ -1,0 +1,16 @@
+torch
+torchvision
+timm
+ml_collections
+opencv-python
+scipy
+tqdm
+scikit-learn
+Pillow
+gradio
+matplotlib
+pandas
+einops
+fastapi
+uvicorn
+python-multipart

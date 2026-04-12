@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AED-MAE System Flowchart</title>
+    <style>
+        body { 
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background-color: #f0f4f8; 
+            padding: 40px; 
+            margin: 0;
+        }
+        h1 { 
+            color: #2c3e50; 
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+        .mermaid { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+    </style>
+    <!-- Load Mermaid.js natively from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true, 
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: { nodeSpacing: 50, rankSpacing: 50, curve: 'basis' }
+        });
+    </script>
+</head>
+<body>
+    <h1>AED-MAE (Masked Autoencoder) System Architecture</h1>
+    <div class="mermaid">
+        graph TD
+            %% Color Styling
+            classDef input fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px,color:#000
+            classDef process fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px,color:#000
+            classDef network fill:#e8f5e9,stroke:#4caf50,stroke-width:2px,color:#000
+            classDef output fill:#ffebee,stroke:#f44336,stroke-width:2px,color:#000
+            
+            %% Raw Video Inputs
+            Vid[Raw Input Video] --> S[Spatial Feature <br> Normal RGB Image]:::input
+            Vid --> T[Temporal Feature <br> Gradient Motion Map]:::input
+            
+            %% Pre-processing
+            S --> P[Patch Division <br> 16x16 Pixel Patches]:::process
+            T --> P
+            
+            %% Data Augmentation / Masking
+            P --> M[Random Masking <br> Hide 50% of the Blocks]:::process
+            
+            %% High-Level Artificial Intelligence Block
+            M -->|Send only the Visible 50%| E[The Encoder <br> Vision Transformer]:::network
+            E -->|Mathematical Extraction| L((Latent Vectors <br> Deep Features)):::network
+            L --> D[The Decoder <br> Vision Transformer]:::network
+            
+            %% Decoder Reconstruction
+            M -.->|Insert Blank Missing Pieces| D
+            D --> R[Reconstructed Fake Image <br> AI's Pure Prediction]:::output
+            
+            %% Final Evaluation Layer
+            R --> Loss{MSE Loss Calculation <br> Difference between Real & Fake}:::process
+            Loss -->|Testing Validation| A[Final Anomaly Score <br> High Error = Anomaly Spike!]:::output
+    </div>
+</body>
+</html>

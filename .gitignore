@@ -1,0 +1,48 @@
+# Environments
+venv/
+venv311/
+venv*/
+__pycache__/
+*.pyc
+
+# Massive Files
+*.zip
+*.tar
+*.gz
+*.pth
+*.pt
+events.out.tfevents.*
+logs/
+*.log
+
+# Extractions
+Avenue_Extracted/
+*.mat
+*.avi
+*.mp4
+datasets/
+__MACOSX/
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.gemini/
+.tempmediaStorage/
+brain/
+docs/*.pdf
+
+# Frontend & Next.js
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+.env.local
+frontend/.env.local
+.env
+
+# Gradio & Inference Temp
+.gradio/
+tmp_inference/
+experiments/
