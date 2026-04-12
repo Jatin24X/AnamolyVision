@@ -28,49 +28,21 @@ Unlike traditional frame-by-frame object detection or heuristic comparisons, thi
 
 ---
 
-## 🏗️ Architecture Stack
+## 🏗️ Architecture & ML Pipeline
 
-### The Frontend (Vercel)
-Built in `frontend/` powered by Next.js 15 App Router.
-- **TailwindCSS** for responsive styling and glassmorphism.
-- Zero local Python requirements. It purely pipes the video via Next API Router (`/api/analyze`) sequentially into the PyTorch cluster.
-- `Lucide React` iconography.
+### 1. The Watchtower Frontend (React/Next.js)
+The frontend delegates massive video processing away from standard servers. It pipes `.mp4` payloads sequentially into the PyTorch cluster using asynchronous edge routes, protected by robust Vercel limits.
 
-### The Model Backend (Modal.com)
-Housed directly in the root directory via `live_backend_api.py`.
-- Computes CV2 gradient dynamics (`prev_img - next_img`), eliminating background bias.
-- Leverages `mae_cvt_patch16` heavily customized through institutional benchmarks.
-- Operates on a seamless FastAPI ASGI thread via `modal_deploy.py`.
+### 2. The ML Pipeline (Serverless GPU)
+The primary execution engine is structured heavily around chronological temporal arrays:
+1. **Frame Ingestion**: Raw video buffers are unpacked using OpenCV and instantly resized into uniform structural blocks entirely inside volatile RAM to maximize compute speeds.
+2. **Motion Extraction**: Computes absolute gradient dynamics (`|prev_img - next_img|`) across sequential steps to cleanly eliminate static background bias.
+3. **Vision Transformer Injection**: Both the normalized RGB frames and motion gradients are formatted into `(C, H, W)` PyTorch tensors and pushed into the `mae_cvt_patch16` network.
+4. **Student-Teacher Decoding**: The "Teacher" model evaluates expected temporal flows based on Avenue-style surveillance, while the "Student" predicts reconstructions over heavily masked patches. 
+5. **Anomaly Aggregation**: The volumetric L2 discrepancy scores are temporally smoothed via Gaussian mapping. Local maximums trigger global timeline spikes, mathematically isolating the exact abnormal sub-frames for the UI.
 
----
-
-## 🚀 Deployment Guide
-You can run this full-stack ML application completely free using the Vercel & Modal hobby tiers. 
-
-### 1. Backend (Modal)
-You must have a Modal account locally linked.
-```bash
-# 1. Install Modal onto your machine
-pip install modal
-
-# 2. Authenticate the CLI with GitHub/Google
-python -m modal setup
-
-# 3. Request your Serverless GPU and deploy!
-python -m modal deploy modal_deploy.py
-```
-> Modal will successfully grant you a remote API URL. Copy this link.
-
-### 2. Frontend (Vercel)
-Navigate into the `frontend` application and utilize the Vercel deployment SDK.
-```bash
-cd frontend
-
-# Deploy interactively
-npx vercel build
-npx vercel --prod
-```
-> **Critical Step:** You MUST add `AED_MAE_BACKEND_URL` into your Vercel Dashboard Environment Variables mapped directly to the URL Modal instantiated for you.
+### 3. Serverless Integration
+The FastAPI backend compiles onto a stateless ASGI thread utilizing Modal.com. It dynamically allocates transient NVIDIA T4/A100 instances during asynchronous video analysis and aggressively spins down to 0 costs immediately afterward.
 
 ---
 
