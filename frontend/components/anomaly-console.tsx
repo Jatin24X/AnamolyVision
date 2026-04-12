@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { collectTelemetry } from "@/lib/telemetry";
 import type { DetectionResult, HighlightFrame, Telemetry } from "@/lib/types";
+import { normalizeBackendResponse } from "@/lib/mock-analysis";
 
 const PROCESS_STEPS = [
   "Input validated",
@@ -198,7 +199,8 @@ export function AnomalyConsole() {
         throw new Error("Analysis request failed.");
       }
 
-      const payload = (await response.json()) as DetectionResult;
+      const rawPayload = await response.json();
+      const payload = await normalizeBackendResponse(rawPayload);
       const withFrames = await extractHighlightFrames(selectedFile, payload);
       setResult({
         ...payload,

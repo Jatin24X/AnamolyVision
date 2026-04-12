@@ -5,6 +5,7 @@ import {
   saveDetectionSession,
   saveLastDetection
 } from "@/lib/ui-settings";
+import { normalizeBackendResponse } from "@/lib/mock-analysis";
 
 export type DetectionSessionState = {
   selectedFile: File | null;
@@ -238,7 +239,8 @@ export async function runDetectionRequest(): Promise<boolean> {
         throw new Error(msg);
       }
 
-      const data = (await response.json()) as DetectionResult;
+      const rawData = await response.json();
+      const data = await normalizeBackendResponse(rawData);
       const selectedFile = state.selectedFile as File;
       const highlights = await extractHighlightFrames(selectedFile, data);
       const finalResult: DetectionResult = {
